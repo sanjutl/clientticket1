@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Developer Dashboard - Bug Tracker</title>
+  <style>
+    :root {
+      --primary-color: #004080;
+      --accent-color: #007bff;
+      --bg-color: #f9fafc;
+      --table-header-bg: #e1e8ff;
+      --border-radius: 8px;
+      --text-color: #333;
+      --footer-bg: #002244;
+      --footer-text: #ccc;
+      --footer-link-color: #89c9ff;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      color: var(--text-color);
+    }
+
+    header {
+      background-color: var(--primary-color);
+      padding: 20px 40px;
+      color: white;
+      font-size: 24px;
+      font-weight: 700;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    }
+
+    main {
+      flex-grow: 1;
+      padding: 30px 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      color: var(--primary-color);
+      font-weight: 700;
+      font-size: 28px;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 15px rgb(0 0 0 / 0.1);
+      padding: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1100px;
+      font-size: 14px;
+    }
+
+    thead tr {
+      background-color: var(--table-header-bg);
+    }
+
+    thead th {
+      text-align: left;
+      padding: 12px 15px;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--primary-color);
+      border-bottom: 2px solid #b3c0ff;
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #e6e9f0;
+      transition: background-color 0.2s ease;
+      cursor: default;
+    }
+
+    tbody tr:hover {
+      background-color: #f1f5ff;
+    }
+
+    tbody td {
+      padding: 10px 12px;
+      vertical-align: middle;
+      white-space: nowrap;
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    select.status-select {
+      font-size: 13px;
+      padding: 5px 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      min-width: 130px;
+      font-weight: 600;
+    }
+
+    .btn-action {
+      background-color: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      transition: background-color 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-action:hover {
+      background-color: #0056b3;
+    }
+
+    @media (max-width: 768px) {
+      thead th, tbody td {
+        padding: 8px 6px;
+        font-size: 12px;
+        white-space: normal;
+        max-width: none;
+      }
+
+      h2 {
+        font-size: 22px;
+      }
+
+      .table-container {
+        padding: 10px;
+      }
+    }
+
+    footer {
+      background-color: var(--footer-bg);
+      color: var(--footer-text);
+      text-align: center;
+      padding: 20px 10px;
+      font-size: 14px;
+      margin-top: auto;
+      user-select: none;
+    }
+
+    footer a {
+      color: var(--footer-link-color);
+      margin: 0 8px;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    Developer Dashboard - Bug Tracker
+  </header>
+
+  <main>
+    <h2>Reported Bugs</h2>
+
+    <div class="table-container">
+      <table aria-label="Reported bugs from users">
+        <thead>
+          <tr>
+            <th>Bug ID</th>
+            <th>Issue Type</th>
+            <th>Priority</th>
+            <th>Subject</th>
+            <th>Location</th>
+            <th>State</th>
+            <th>Country</th>
+            <th>Description</th>
+            <th>Time Reported</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="bugTableBody">
+        {% for bug in bugs %}
+          
+            <form method="POST" action="{{ url_for('developer_update') }}">
+              <tr>
+              <td>
+                {{ bug.id }}
+                <input type="hidden" name="bug_id" value="{{ bug.id }}">
+              </td>
+              <td><input type="text" name="issue_type" value="{{ bug.issue_type }}"></td>
+              <td><input type="text" name="priority" value="{{ bug.priority }}"></td>
+              <td><input type="text" name="subject" value="{{ bug.subject }}"></td>
+              <td><input type="text" name="location" value="{{ bug.location }}"></td>
+              <td><input type="text" name="state" value="{{ bug.state }}"></td>
+              <td><input type="text" name="country" value="{{ bug.country }}"></td>
+              <td><textarea name="description">{{ bug.description }}</textarea></td>
+              <td><input type="datetime-local" name="time_reported" value="{{ bug.created_at.split('.')[0] | replace(' ', 'T') }}"></td>
+
+              <td>
+                <select class="status-select" name="status">
+
+                  {% for status in ['open', 'in-progress', 'resolved'] %}
+                    <option value="{{ status }}" {% if bug.status == status %}selected{% endif %}>{{ status }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+              <td>
+                <button class="btn-action" type="submit">Save</button>
+              </td>
+              </tr>
+            </form>
+          
+        {% endfor %}
+
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Scipy Technologies</p>
+    <p>
+      <a href="#">Instagram</a> |
+      <a href="#">LinkedIn</a> |
+      <a href="#">Facebook</a> |
+      <a href="#">Twitter</a>
+    </p>
+  </footer>
+
+</body>
+</html>

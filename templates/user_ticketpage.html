@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Report an Issue</title>
+  <link rel="stylesheet" href="../static/userticket.css">
+  <script>
+    // Dynamic State Dropdown based on Country
+    function updateStates() {
+      const country = document.getElementById("country").value;
+      const state = document.getElementById("state");
+
+      const statesByCountry = {
+        India: ["Kerala", "Tamil Nadu", "Karnataka", "Maharashtra"],
+        USA: ["California", "Texas", "New York"],
+        UK: ["England", "Scotland", "Wales"],
+        Canada: ["Ontario", "Quebec", "British Columbia"],
+        Australia: ["New South Wales", "Victoria", "Queensland"]
+      };
+
+      state.innerHTML = '<option value="">Select State</option>';
+      if (country && statesByCountry[country]) {
+        statesByCountry[country].forEach(s => {
+          const option = document.createElement("option");
+          option.value = s;
+          option.text = s;
+          state.appendChild(option);
+        });
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Report an Issue - TicketPro System</h1>
+    <form action="/submit" method="POST" enctype="multipart/form-data">
+
+      <div class="form-group">
+        <label for="appName">App Name</label>
+        <input type="text" id="appName" name="appName" value="TicketPro System" readonly />
+      </div>
+
+      <div class="form-group">
+        <label for="country">Country</label>
+        <select id="country" name="country" onchange="updateStates()" required>
+          <option value="">Select Country</option>
+          <option value="India">India</option>
+          <option value="USA">USA</option>
+          <option value="UK">UK</option>
+          <option value="Canada">Canada</option>
+          <option value="Australia">Australia</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="state">State</label>
+        <select id="state" name="state" required>
+          <option value="">Select State</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="location">City/Location</label>
+        <input type="text" id="location" name="location" placeholder="Enter your city or area" required />
+      </div>
+
+      <div class="form-group">
+        <label for="issueType">Issue Type</label>
+        <select id="issueType" name="issueType" required>
+          <option value="">Select</option>
+          <option value="Bug">Bug</option>
+          <option value="UI">UI Problem</option>
+          <option value="Performance">Performance</option>
+          <option value="Crash">Crash/Error</option>
+          <option value="Request">Feature Request</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="subject">Subject</label>
+        <input type="text" id="subject" name="subject" placeholder="Short summary of issue" required />
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="5" placeholder="Explain the issue in detail..." required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="attachment">Attachment</label>
+        <input type="file" id="attachment" name="attachment" accept=".jpg,.png,.pdf,.docx,.txt" />
+      </div>
+
+      <div class="form-group">
+        <label for="priority">Priority</label>
+        <select id="priority" name="priority" required>
+          <option value="">Select Priority</option>
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+          <option value="Urgent">Urgent</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Your Email ID</label>
+        <input type="email" id="email" name="email" placeholder="example@domain.com" required />
+      </div>
+
+      <div class="form-actions">
+        <button type="reset" class="btn reset">Reset</button>
+        <button type="submit" class="btn submit">Submit</button>
+      </div>
+    </form>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2025 Scipy Technologies</p>
+    <p>
+      <a href="#">Instagram</a> |
+      <a href="#">LinkedIn</a> |
+      <a href="#">Facebook</a> |
+      <a href="#">Twitter</a>
+    </p>
+  </footer>
+</body>
+
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Dashboard - Ticket Overview</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f3f4f6;
+      color: #333;
+    }
+
+    header {
+      background-color: #004080;
+      color: white;
+      padding: 20px 40px;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    main {
+      padding: 30px;
+      max-width: 1400px;
+      margin: auto;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 26px;
+      color: #004080;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #e0e0e0;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #e1e8ff;
+      font-weight: 600;
+      color: #004080;
+    }
+
+    tr:hover {
+      background-color: #f1f5ff;
+    }
+
+    td[title] {
+      cursor: help;
+    }
+
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 14px;
+      color: #666;
+      padding: 20px;
+      background: #002244;
+      color: #ccc;
+    }
+
+    @media (max-width: 768px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      thead tr {
+        display: none;
+      }
+
+      tr {
+        margin-bottom: 15px;
+      }
+
+      td {
+        padding-left: 50%;
+        position: relative;
+      }
+
+      td::before {
+        position: absolute;
+        top: 12px;
+        left: 15px;
+        width: 45%;
+        white-space: nowrap;
+        font-weight: bold;
+      }
+
+      td:nth-of-type(1)::before { content: "Ticket ID"; }
+      td:nth-of-type(2)::before { content: "Subject"; }
+      td:nth-of-type(3)::before { content: "Issue Type"; }
+      td:nth-of-type(4)::before { content: "Priority"; }
+      td:nth-of-type(5)::before { content: "Location"; }
+      td:nth-of-type(6)::before { content: "State"; }
+      td:nth-of-type(7)::before { content: "Country"; }
+      td:nth-of-type(8)::before { content: "Description"; }
+      td:nth-of-type(9)::before { content: "Created At"; }
+      td:nth-of-type(10)::before { content: "Status"; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    Admin Dashboard - Ticket Overview
+  </header>
+
+  <main>
+    <h2>All Submitted Tickets with Status</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Ticket ID</th>
+          <th>Subject</th>
+          <th>Issue Type</th>
+          <th>Priority</th>
+          <th>Location</th>
+          <th>State</th>
+          <th>Country</th>
+          <th>Description</th>
+          <th>Created At</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for update in updates %}
+        <tr>
+          <td>{{ update.id }}</td>
+          <td>{{ update.subject }}</td>
+          <td>{{ update.issue_type }}</td>
+          <td>{{ update.priority }}</td>
+          <td>{{ update.location }}</td>
+          <td>{{ update.state }}</td>
+          <td>{{ update.country }}</td>
+          <td title="{{ update.description }}">{{ update.description[:50] }}{% if update.description|length > 50 %}...{% endif %}</td>
+          <td>{{ update.created_at }}</td>
+          <td>{{ update.status or 'Pending' }}</td>
+
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </main>
+
+  <footer>
+    &copy; 2025 Scipy Technologies - Admin Panel
+  </footer>
+</body>
+</html>

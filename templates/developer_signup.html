@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Developer Sign Up - Scipy TicketPro</title>
+  <style>
+    :root {
+      --primary-color: #004080;
+      --secondary-color: #ffffff;
+      --accent-color: #007bff;
+      --input-bg: #f4f6f8;
+      --border-radius: 8px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      color: #333;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 80px auto 20px;
+      background-color: #fff;
+      padding: 40px 30px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: var(--primary-color);
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 45px 12px 12px;
+      background-color: var(--input-bg);
+      border: 1px solid #ccc;
+      border-radius: var(--border-radius);
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus {
+      border-color: var(--accent-color);
+      outline: none;
+    }
+
+    .password-wrapper {
+      display: flex;
+      align-items: center;
+      position: relative;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: white;
+      padding: 0 10px;
+    }
+
+    .password-wrapper input {
+      border: none;
+      outline: none;
+      background: transparent;
+      width: 100%;
+      font-size: 14px;
+      padding: 10px 0;
+    }
+
+    .toggle-icon {
+      color: #666;
+      cursor: pointer;
+      width: 30px;
+      text-align: center;
+    }
+
+    .btn {
+      background-color: var(--accent-color);
+      color: #fff;
+      padding: 12px 25px;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      background-color: #0056b3;
+    }
+
+    .login-link {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .login-link a {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    .footer {
+      margin-top: auto;
+      padding: 20px 10px;
+      background-color: #002244;
+      color: #ccc;
+      text-align: center;
+    }
+
+    .footer p {
+      margin: 5px 0;
+    }
+
+    .footer a {
+      color: #89c9ff;
+      margin: 0 8px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Toast styles */
+    #toast {
+      visibility: hidden;
+      min-width: 250px;
+      background-color: #28a745;
+      color: white;
+      text-align: center;
+      border-radius: 8px;
+      padding: 14px 20px;
+      position: fixed;
+      z-index: 9999;
+      left: 50%;
+      bottom: 40px;
+      font-size: 16px;
+      transform: translateX(-50%);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+    }
+
+    #toast.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    @media screen and (max-width: 480px) {
+      .container {
+        margin: 40px 20px;
+        padding: 30px 20px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+
+  <div class="container">
+    <h1>Developer Sign Up</h1>
+    <form id="signupForm" action="/developer_signup" method="POST">
+      <div class="form-group">
+        <label for="email">Email ID</label>
+        <input type="email" id="email" name="email" placeholder="developer@example.com" required />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="password" name="password" placeholder="Enter password" required />
+          <span class="toggle-icon" onclick="togglePassword('password', this)">
+            <i class="fa fa-eye"></i>
+          </span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm password" required />
+          <span class="toggle-icon" onclick="togglePassword('confirmPassword', this)">
+            <i class="fa fa-eye"></i>
+          </span>
+        </div>
+      </div>
+
+      <button type="submit" class="btn">Sign Up</button>
+    </form>
+
+    <div class="login-link">
+      Already have an account? <a href="/developer_login">Login here</a>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2025 Scipy Technologies</p>
+    <p>
+      <a href="#">Instagram</a> |
+      <a href="#">LinkedIn</a> |
+      <a href="#">Facebook</a> |
+      <a href="#">Twitter</a>
+    </p>
+  </footer>
+
+  <!-- Toast -->
+  <div id="toast"></div>
+
+  <script>
+    // Toggle password visibility function
+    function togglePassword(fieldId, toggleElement) {
+      const input = document.getElementById(fieldId);
+      const icon = toggleElement.querySelector('i');
+      if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+      } else {
+        input.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+      }
+    }
+
+    // Email validation function
+    function validateEmail(email) {
+      const pattern = /^[^ ]+@[^ ]+\.[a-z]{2,}$/i;
+      return pattern.test(email);
+    }
+
+    // Toast show function
+    function showToast(message, isError = false) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.style.backgroundColor = isError ? '#dc3545' : '#28a745'; // red for error, green for success
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3000);
+    }
+
+    // Form submission with validation
+    document.getElementById("signupForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const email = this.email.value.trim();
+      const password = this.password.value;
+      const confirmPassword = this.confirmPassword.value;
+
+      if (!validateEmail(email)) {
+        showToast("Please enter a valid email address.", true);
+        return;
+      }
+
+      if (password.length < 6) {
+        showToast("Password must be at least 6 characters.", true);
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showToast("Passwords do not match.", true);
+        return;
+      }
+
+      // All validation passed
+      showToast("Sign up successful!");
+
+      // Submit form after a delay to show toast
+      setTimeout(() => {
+        this.submit();
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

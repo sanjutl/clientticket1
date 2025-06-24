@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Developer Login - Scipy TicketPro</title>
+  <style>
+    :root {
+      --primary-color: #004080;
+      --secondary-color: #ffffff;
+      --accent-color: #007bff;
+      --input-bg: #f4f6f8;
+      --border-radius: 8px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      color: #333;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 80px auto 20px;
+      background-color: #fff;
+      padding: 40px 30px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: var(--primary-color);
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 45px 12px 12px; /* padding right for toggle button */
+      background-color: var(--input-bg);
+      border: 1px solid #ccc;
+      border-radius: var(--border-radius);
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus {
+      border-color: var(--accent-color);
+      outline: none;
+    }
+    .password-wrapper input {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    .password-wrapper {
+      display: flex;
+      align-items: center;
+      position: relative;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      background: white;
+      padding: 0 10px;
+    }
+
+    .password-wrapper input {
+      border: none;
+      outline: none;
+      background: transparent;
+    }
+
+    .toggle-icon {
+      color: #666;
+      cursor: pointer;
+      width: 30px;
+      text-align: center;
+    }
+
+    /* Forgot Password Button */
+    #forgotPasswordBtn {
+      background: none;
+      border: none;
+      color: var(--accent-color);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      margin-top: -15px;
+      margin-bottom: 20px;
+      float: right;
+      padding: 0;
+    }
+
+    .form-actions {
+      margin-top: 25px;
+      text-align: center;
+      clear: both;
+    }
+
+    .btn {
+      background-color: var(--accent-color);
+      color: #fff;
+      padding: 12px 25px;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #0056b3;
+    }
+
+    .signup {
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    .signup a {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .signup a:hover {
+      text-decoration: underline;
+    }
+
+    .footer {
+      margin-top: auto;
+      padding: 20px 10px;
+      background-color: #002244;
+      color: #ccc;
+      text-align: center;
+    }
+
+    .footer p {
+      margin: 5px 0;
+    }
+
+    .footer a {
+      color: #89c9ff;
+      margin: 0 8px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Toast styles */
+    #toast {
+      visibility: hidden;
+      min-width: 250px;
+      background-color: #28a745;
+      color: white;
+      text-align: center;
+      border-radius: 8px;
+      padding: 14px 20px;
+      position: fixed;
+      z-index: 9999;
+      left: 50%;
+      bottom: 40px;
+      font-size: 16px;
+      transform: translateX(-50%);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+    }
+
+    #toast.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    @media screen and (max-width: 480px) {
+      .container {
+        margin: 40px 20px;
+        padding: 30px 20px;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      #forgotPasswordBtn {
+        float: none;
+        display: block;
+        text-align: right;
+      }
+    }
+  </style>
+  <!-- Load FontAwesome CDN for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+
+  <div class="container">
+    <h1>Developer Login</h1>
+    <form id="loginForm" action="/developer_login" method="POST">
+      <div class="form-group">
+        <label for="email">Email ID</label>
+        <input type="email" id="email" name="email" placeholder="developer@example.com" required />
+      </div>
+
+      <label>Password:</label>
+      <div class="password-wrapper">
+          <input type="password" name="password" id="password" required placeholder="Enter your password" />
+          <span class="toggle-icon" onclick="togglePassword()">
+              <i class="fa fa-eye" id="toggleIcon"></i>
+          </span>
+      </div>
+
+      <button type="button" id="forgotPasswordBtn">Forgot Password?</button>
+
+      <div class="form-actions">
+        <button type="submit" class="btn">Login</button>
+      </div>
+    </form>
+
+    <div class="signup">
+      <p>New here? <a href="/developer_signup">Sign Up</a></p>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2025 Scipy Technologies</p>
+    <p>
+      <a href="#">Instagram</a> |
+      <a href="#">LinkedIn</a> |
+      <a href="#">Facebook</a> |
+      <a href="#">Twitter</a>
+    </p>
+  </footer>
+
+  <!-- Toast -->
+  <div id="toast">Login successful!</div>
+
+  <script>
+    // Toggle password visibility
+    function togglePassword() {
+      const passwordInput = document.getElementById("password");
+      const toggleIcon = document.getElementById("toggleIcon");
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        toggleIcon.classList.remove("fa-eye");
+        toggleIcon.classList.add("fa-eye-slash");
+      } else {
+        passwordInput.type = "password";
+        toggleIcon.classList.remove("fa-eye-slash");
+        toggleIcon.classList.add("fa-eye");
+      }
+    }
+
+    // Email validation function
+    function validateEmail(email) {
+      const pattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+      return pattern.test(email);
+    }
+
+    // Toast show function
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3000);
+    }
+
+    // Handle form submission
+    document.getElementById("loginForm").addEventListener("submit", function(event) {
+  // event.preventDefault();  // Remove this line or comment it out
+
+  const emailInput = document.getElementById("email").value.trim();
+
+  if (!validateEmail(emailInput)) {
+    alert("Please enter a valid email address.");
+    event.preventDefault();  // Prevent submission only if invalid
+    return;
+  }
+
+  // Show toast on successful validation
+  showToast("Login successful!");
+
+      // Uncomment the next line when backend is ready:
+      // this.submit();
+    });
+
+    // Handle Forgot Password button click
+    document.getElementById("forgotPasswordBtn").addEventListener("click", function() {
+      const email = prompt("Please enter your registered email ID to reset password:");
+      if (email) {
+        if (validateEmail(email.trim())) {
+          // Simulate sending password reset email here
+          showToast(`Password reset link sent to ${email.trim()}`);
+          // You can call your backend API here to send actual reset link
+        } else {
+          alert("Please enter a valid email address.");
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
