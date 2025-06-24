@@ -3,12 +3,10 @@ import sqlite3
 import os
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash, generate_password_hash
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta
 
 def get_ist_time():
     return datetime.utcnow() + timedelta(hours=5, minutes=30)
-
-
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -16,8 +14,6 @@ app.secret_key = 'your_secret_key'
 UPLOAD_FOLDER = 'static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-
 
 DATABASE = 'tickets.db'
 
@@ -27,10 +23,9 @@ def get_db_connection():
     return conn
 
 def init_db():
-    # Create tables if they don't exist
     conn = get_db_connection()
     cursor = conn.cursor()
-    
+
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS tickets (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -63,6 +58,7 @@ def init_db():
             password_hash TEXT NOT NULL
         )
     ''')
+
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS developer_dashboard (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -78,18 +74,17 @@ def init_db():
             email TEXT,
             status TEXT DEFAULT 'Pending',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-''')
+        )
+    ''')
 
-    
-    
-
-
-       admin = conn.execute('SELECT * FROM admins WHERE username = ?', ('admin',)).fetchone()
+    # Ensure default admin exists
+    admin = conn.execute('SELECT * FROM admins WHERE username = ?', ('admin',)).fetchone()
     if not admin:
         hashed_admin_pw = generate_password_hash('admin123', method='pbkdf2:sha256')
         conn.execute('INSERT INTO admins (username, password_hash) VALUES (?, ?)', ('admin', hashed_admin_pw))
 
+    conn.commit()
+    conn.close()
 
 @app.route('/')
 def index():
@@ -113,7 +108,6 @@ def submit():
         'email': request.form.get('email'),
     }
 
-    # Handle file upload
     file = request.files.get('attachment')
     if file and file.filename != '':
         filename = secure_filename(file.filename)
@@ -123,13 +117,11 @@ def submit():
     else:
         data['attachment'] = None
 
-    # ✅ Fix: define created_at before using it
     created_at = get_ist_time()
 
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # Insert into tickets
     cursor.execute('''
         INSERT INTO tickets (app_name, country, state, location, issue_type, subject, description, attachment, priority, email, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -139,24 +131,20 @@ def submit():
         data['attachment'], data['priority'], data['email'], created_at
     ))
 
-
-    # Also insert into developer_dashboard with default status
     cursor.execute('''
         INSERT INTO developer_dashboard (app_name, country, state, location, issue_type, subject, description, attachment, priority, email, status, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (
+    ''', (
         data['app_name'], data['country'], data['state'], data['location'],
         data['issue_type'], data['subject'], data['description'],
         data['attachment'], data['priority'], data['email'], 'Pending', created_at
     ))
-
 
     conn.commit()
     conn.close()
 
     flash("Ticket submitted successfully!", "success")
     return redirect('/')
-
 
 @app.route('/developer_login', methods=['GET', 'POST'])
 def developer_login():
@@ -185,8 +173,6 @@ def developer_dashboard():
     bugs = conn.execute("SELECT * FROM developer_dashboard WHERE status != 'resolved' ORDER BY created_at DESC").fetchall()
     conn.close()
     return render_template('developer_dashboard.html', bugs=bugs)
-
-
 
 @app.route('/update_status/<int:ticket_id>', methods=['POST'])
 def update_status(ticket_id):
@@ -225,15 +211,12 @@ def developer_update():
     flash('Bug status updated successfully!', 'info')
     return redirect(url_for('developer_dashboard'))
 
-
-
 @app.route('/developer_signup', methods=['GET', 'POST'])
 def developer_signup():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
 
-        # Hash the password before storing
         password_hash = generate_password_hash(password)
 
         conn = get_db_connection()
@@ -247,7 +230,6 @@ def developer_signup():
 
     return render_template('developer_signup.html')
 
-
 @app.route('/admin-login', methods=['GET', 'POST'])
 def admin_login():
     if request.method == 'POST':
@@ -259,14 +241,11 @@ def admin_login():
         conn.close()
 
         if admin and check_password_hash(admin['password_hash'], password):
-            # Successful login
             return redirect(url_for('admin_dashboard'))
         else:
             flash('Invalid username or password.', 'error')
 
     return render_template('admin_login.html')
-
-
 
 @app.route('/admin_dashboard')
 def admin_dashboard():
@@ -274,10 +253,6 @@ def admin_dashboard():
     updates = conn.execute('SELECT * FROM developer_dashboard').fetchall()
     conn.close()
     return render_template('admin_dashboard.html', updates=updates)
-
-
-
-
 
 if __name__ == '__main__':
     init_db()
